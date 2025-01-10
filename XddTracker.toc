@@ -3,4 +3,9 @@
 ## Author: lipeeeee 
 ## Version: 1.0
 ## Notes: Tracks deaths & anounces them
-XddTracker.lua
+## SavedVariables: XddTrackerDB
+
+core.lua
+events.lua
+functions.lua
+commands.lua
