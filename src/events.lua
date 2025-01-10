@@ -3,7 +3,6 @@ function XddTracker:ADDON_LOADED(addonName)
     if addonName == "XddTracker" then
         self.DB = XddTrackerDB or {} -- Sync db
         -- ! REGISTERADDONMESSAGEPREFIX
-        RegisterAddonMessagePrefix("XddTracker")
 
         -- Sync full db after loading
         -- C_Timer only came in WOD....
@@ -43,6 +42,7 @@ end
 
 -- CHAT_MSG_ADDON
 function XddTracker:CHAT_MSG_ADDON(prefix, message, channel, sender)
+    -- if prefix ~= "XddTracker" or sender == UnitName("player") then return end
     if prefix ~= "XddTracker" or sender == UnitName("player") then return end
 
     if strsub(message, 1, 5) == "SYNC|" then -- Sync data
@@ -63,6 +63,11 @@ function XddTracker:CHAT_MSG_ADDON(prefix, message, channel, sender)
           self.DB[name] = count
           RaidNotice_AddMessage(RaidWarningFrame, name .. " has died! Total deaths: " .. count, ChatTypeInfo["RAID_WARNING"])
       end
+    elseif strsub(message, 1, 5) == "SYRQ|" then -- Sync request 
+      print("XddTracker: Sync requested by " .. sender .. ". Sending data.")
+      self:BroadcastDB()
+    elseif strsub(message, 1, 5) == "SYRC|" and param1 and param2 then -- Sync receive
+      self:MergeDB(param1, param2)
     end
 end
 

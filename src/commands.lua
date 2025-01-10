@@ -13,7 +13,7 @@ end
 
 SLASH_XDDSYNC1 = "/sync"
 SlashCmdList["XDDSYNC"] = function()
+    SendAddonMessage("XddTracker", "SYRQ|", "GUILD")
     print("XddTracker: Sync request sent to GUILD.")
-    SendAddonMessage("XddTracker", "SYNC_REQUEST", "GUILD")
 end
 
