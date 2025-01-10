@@ -1,6 +1,0 @@
-## Interface: 30300
-## Title: Death Tracker anw
-## Author: lipeeeee 
-## Version: 1.0
-## Notes: Tracks deaths & anounces them
-XddTracker.lua
