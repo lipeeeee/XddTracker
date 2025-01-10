@@ -7,8 +7,8 @@ function XddTracker:ADDON_LOADED(addonName)
 
         -- Sync full db after loading
         -- C_Timer only came in WOD....
-        self:BroadcastFullDB()
-        print("XddTracker loaded, syncing with group...")
+        self:BroadcastDB()
+        print("XddTracker loaded, syncing with guild...")
     end
 end
 
@@ -24,11 +24,7 @@ function XddTracker:PLAYER_DEAD()
     end
 
     RaidNotice_AddMessage(RaidWarningFrame, self.playerName .. " has died! Cause: " .. cause .. ". Total deaths: " .. self.DB[self.playerName], ChatTypeInfo["RAID_WARNING"])
-    if false then -- Manually switch this, either for whole db or just death broadcast
-      self:BroadcastDB()
-    else
-      self:BroadcastDeath(self.playerName)
-    end
+    self:BroadcastDeath(self.playerName)
 end
 
 -- COMBAT_LOG_EVENT_UNFILTERED
@@ -47,36 +43,26 @@ end
 
 -- CHAT_MSG_ADDON
 function XddTracker:CHAT_MSG_ADDON(prefix, message, channel, sender)
-    if prefix == "XddTracker" and sender ~= self.playerName then
-        local name, count = strsplit(":", message)
-        count = tonumber(count)
+    if prefix ~= "XddTracker" or sender == UnitName("player") then return end
 
-        if not self.DB[name] or count > self.DB[name] then
-            self.DB[name] = count
-            RaidNotice_AddMessage(RaidWarningFrame, name .. " has died! Total deaths: " .. count, ChatTypeInfo["RAID_WARNING"])
-        end
+    if strsub(message, 1, 5) == "SYNC|" then -- Sync data
+      local data = strsub(message, 6)
+      local name, count = strsplit(":", data)
+      count = tonumber(count)
 
+      -- Merge logic
+      if not self.DB[name] or count > self.DB[name] then
+        self.DB[name] = count
+        print(name .. "'s death count updated to " .. count .. " (Synced)")
+      end
+    elseif strsub(message, 1, 5) == "ANCC|" then -- Announce
+      local name, count = strsplit(":", message)
+      count = tonumber(count)
 
-        -- Sync shit
-        if strsub(message, 1, 5) == "SYNC|" then
-          local data = strsub(message, 6)
-          local name, count = strsplit(":", data)
-          count = tonumber(count)
-
-          -- Merge logic
-          if not self.DB[name] or count > self.DB[name] then
-            self.DB[name] = count
-            print(name .. "'s death count updated to " .. count .. " (Synced)")
-          end
-        else -- Handle normal brocadcasts
-          local name, count = strsplit(":", message)
-          count = tonumber(count)
-          
-          -- procs when raid warning
-          if not self.DB[name] or count > self.DB[name] then
-            self.DB[name] = count
-          end
-        end
+      if not self.DB[name] or count > self.DB[name] then
+          self.DB[name] = count
+          RaidNotice_AddMessage(RaidWarningFrame, name .. " has died! Total deaths: " .. count, ChatTypeInfo["RAID_WARNING"])
+      end
     end
 end
 
