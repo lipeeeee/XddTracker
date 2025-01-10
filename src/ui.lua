@@ -2,7 +2,6 @@
 -- ISSUES: This is not running at all
 -- creating frame works
 
-XddTrackerDB = XddTrackerDB or {} -- !CHANGE!
 -- Create Main Frame
 local XddTrackerFrame = CreateFrame("Frame", "XddTrackerFrame", UIParent)
 XddTrackerFrame:SetSize(250, 300)
