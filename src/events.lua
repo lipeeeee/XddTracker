@@ -9,12 +9,12 @@ function XddTracker:ADDON_LOADED(addonName)
     -- C_Timer only came in WOD so we rawdog it
     self:BroadcastDB()
   end
+  UpdateDeathList()
 end
 
 function XddTracker:PLAYER_DEAD()
   self.DB[self.playerName] = (self.DB[self.playerName] or 0) + 1
-  XddTrackerDB[self.playerName] = self.DB[self.playerName]
-  print(yay)
+  
   local cause = "Unknown"
   if self.recentDamage.subevent == "ENVIRONMENTAL_DAMAGE" then
     cause = "Fall Damage"
@@ -26,6 +26,8 @@ function XddTracker:PLAYER_DEAD()
     self.playerName .. " has died! Cause: " .. cause .. ". Total deaths: " .. self.DB[self.playerName],
     ChatTypeInfo["RAID_WARNING"])
   self:BroadcastDeath(self.playerName)
+
+  UpdateDeathList()
 end
 
 function XddTracker:COMBAT_LOG_EVENT_UNFILTERED()
