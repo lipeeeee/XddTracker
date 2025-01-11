@@ -1,2 +1,4 @@
 *.zip
 XddTracker/
+.vscode/
+instigs.py

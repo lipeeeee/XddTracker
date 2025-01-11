@@ -32,12 +32,12 @@ closeButton:SetScript("OnClick", function()
 end)
 
 -- Scroll Frame
-local scrollFrame = CreateFrame("ScrollFrame", nil, XddTrackerFrame, "UIPanelScrollFrameTemplate")
+local scrollFrame = CreateFrame("ScrollFrame", "XddTrackerScrollFrame", XddTrackerFrame, "UIPanelScrollFrameTemplate")
 scrollFrame:SetSize(220, 220)
 scrollFrame:SetPoint("TOP", 0, -40)
 
 -- Content Frame
-local content = CreateFrame("Frame", nil, scrollFrame)
+local content = CreateFrame("Frame", "XddTrackerContent", scrollFrame)
 content:SetSize(220, 220)
 scrollFrame:SetScrollChild(content)
 
@@ -56,3 +56,4 @@ local function UpdateDeathList()
 end
 
 
+UpdateDeathList()
