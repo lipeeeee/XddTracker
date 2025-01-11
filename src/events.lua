@@ -1,73 +1,72 @@
--- ADDON_LOADED
 function XddTracker:ADDON_LOADED(addonName)
-    if addonName == "XddTracker" then
-        self.DB = XddTrackerDB or {} -- Sync db
-        -- ! REGISTERADDONMESSAGEPREFIX
-
-        -- Sync full db after loading
-        -- C_Timer only came in WOD....
-        self:BroadcastDB()
-        print("XddTracker loaded, syncing with guild...")
+  if addonName == self.PREFIX then
+    print("XddTracker loaded, syncing with database with GUILD...")
+    if not XddTrackerDB then
+      XddTrackerDB = {}          -- What.. the.. fuck
     end
+    self.DB = XddTrackerDB or {} -- Sync db
+    -- C_Timer only came in WOD so we rawdog it
+    self:BroadcastDB()
+  end
 end
 
--- PLAYER_DEAD
 function XddTracker:PLAYER_DEAD()
-    self.DB[self.playerName] = (self.DB[self.playerName] or 0) + 1
+  self.DB[self.playerName] = (self.DB[self.playerName] or 0) + 1
 
-    local cause = "Unknown"
-    if self.recentDamage.subevent == "ENVIRONMENTAL_DAMAGE" then
-        cause = "Fall Damage"
-    elseif self.recentDamage.sourceName then
-        cause = self.recentDamage.sourceName .. " (" .. (self.recentDamage.spellName or "Unknown") .. ")"
-    end
+  local cause = "Unknown"
+  if self.recentDamage.subevent == "ENVIRONMENTAL_DAMAGE" then
+    cause = "Fall Damage"
+  elseif self.recentDamage.sourceName then
+    cause = self.recentDamage.sourceName .. " (" .. (self.recentDamage.spellName or "Unknown") .. ")"
+  end
 
-    RaidNotice_AddMessage(RaidWarningFrame, self.playerName .. " has died! Cause: " .. cause .. ". Total deaths: " .. self.DB[self.playerName], ChatTypeInfo["RAID_WARNING"])
-    self:BroadcastDeath(self.playerName)
+  RaidNotice_AddMessage(RaidWarningFrame,
+    self.playerName .. " has died! Cause: " .. cause .. ". Total deaths: " .. self.DB[self.playerName],
+    ChatTypeInfo["RAID_WARNING"])
+  self:BroadcastDeath(self.playerName)
 end
 
--- COMBAT_LOG_EVENT_UNFILTERED
-function XddTracker:COMBAT_LOG_EVENT_UNFILTERED() -- CHECK THIS, CRASHES ON LINE 1
-    local timestamp, subevent, _, sourceGUID, sourceName, _, _, destGUID, destName, _, _, spellId, spellName, _, damage = CombatLogGetCurrentEventInfo()
-    if destName == self.playerName then
-        self.recentDamage = {
-            timestamp = timestamp,
-            subevent = subevent,
-            sourceName = sourceName or "Environment",
-            spellName = spellName or "Melee",
-            damage = damage
-        }
-    end
+function XddTracker:COMBAT_LOG_EVENT_UNFILTERED()
+  local timestamp, subevent, _, sourceGUID, sourceName, _, _, destGUID, destName, _, _, spellId, spellName, _, damage =
+      CombatLogGetCurrentEventInfo()
+  if destName == self.playerName then
+    self.recentDamage = {
+      timestamp = timestamp,
+      subevent = subevent,
+      sourceName = sourceName or "Environment",
+      spellName = spellName or "Melee",
+      damage = damage
+    }
+  end
 end
 
--- CHAT_MSG_ADDON
 function XddTracker:CHAT_MSG_ADDON(prefix, message, channel, sender)
-    -- if prefix ~= "XddTracker" or sender == UnitName("player") then return end
-    if prefix ~= "XddTracker" or sender == UnitName("player") then return end
+  -- if prefix ~= "XddTracker" or sender == UnitName("player") then return end
+  if prefix ~= self.PREFIX then
+    print("[DEBUG] IGNORING MESSAGE((" .. prefix .. ")" .. message .. ") IN " .. channel)
+    return
+  end
 
-    if strsub(message, 1, 5) == "SYNC|" then -- Sync data
-      local data = strsub(message, 6)
-      local name, count = strsplit(":", data)
-      count = tonumber(count)
-
-      -- Merge logic
-      if not self.DB[name] or count > self.DB[name] then
-        self.DB[name] = count
-        print(name .. "'s death count updated to " .. count .. " (Synced)")
-      end
-    elseif strsub(message, 1, 5) == "ANCC|" then -- Announce
-      local name, count = strsplit(":", message)
-      count = tonumber(count)
-
-      if not self.DB[name] or count > self.DB[name] then
-          self.DB[name] = count
-          RaidNotice_AddMessage(RaidWarningFrame, name .. " has died! Total deaths: " .. count, ChatTypeInfo["RAID_WARNING"])
-      end
-    elseif strsub(message, 1, 5) == "SYRQ|" then -- Sync request 
-      print("XddTracker: Sync requested by " .. sender .. ". Sending data.")
-      self:BroadcastDB()
-    elseif strsub(message, 1, 5) == "SYRC|" and param1 and param2 then -- Sync receive
-      self:MergeDB(param1, param2)
+  print("[DEBUG] Received - (" .. prefix .. ")" .. message)
+  local command = string.sub(message, 1, self.MSG_LEN)
+  if command == self.MSG_SYNC_SEND then -- Sync data
+    local data = string.sub(message, 6)
+    local name, count = strsplit(":", data)
+    if self:MergeDB(name, count) then
+      print(name .. "'s death count updated to " .. count .. " (Synced)")
     end
+  elseif command == self.MSG_DEATH_BROADCAST then -- In-game death announcer
+    local data = string.sub(message, 6)
+    local name, count = strsplit(":", data)
+    if self:MergeDB(name, count) then
+      RaidNotice_AddMessage(RaidWarningFrame, name .. " has died! Total deaths: " .. count, ChatTypeInfo["RAID_WARNING"])
+    end
+  elseif command == self.MSG_SYNC_REQUEST then -- Sync request
+    print("XddTracker: Sync requested by " .. sender .. ". Sending data.")
+    self:BroadcastDB()
+  end
 end
 
+function XddTracker:PLAYER_LOGOUT()
+  XddTrackerDB = self.DB
+end

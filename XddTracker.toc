@@ -6,6 +6,7 @@
 ## SavedVariables: XddTrackerDB
 
 core.lua
+constants.lua
 events.lua
 functions.lua
 commands.lua
