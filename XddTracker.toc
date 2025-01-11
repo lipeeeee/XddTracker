@@ -9,5 +9,5 @@ core.lua
 constants.lua
 events.lua
 functions.lua
-commands.lua
 ui.lua
+commands.lua

@@ -41,19 +41,40 @@ local content = CreateFrame("Frame", "XddTrackerContent", scrollFrame)
 content:SetSize(220, 220)
 scrollFrame:SetScrollChild(content)
 
+
+--Clear Children (content:ReleaseChildren was crashing the function)
+local function ClearContentChildren(frame) 
+    local children = { frame:GetChildren() }
+    for _, child in ipairs(children) do
+        child:Hide()
+        child:SetParent(nil)
+    end
+end
+
 -- Dynamic Death List
-local function UpdateDeathList()
-    content:ReleaseChildren()  -- Clear previous entries
+_G.UpdateDeathList = function ()
+    print("Updating Death List")
+    ClearContentChildren(content)
+    print("Released Children")
+
+    if not XddTrackerDB then
+        print("XddTrackerDB is nil")
+    else
+        print("XddTrackerDB contents:")
+        for name, count in pairs(XddTrackerDB) do
+            print(name .. ": " .. count)
+        end
+    end
 
     local yOffset = -5
-    XddTrackerDB = XddTrackerDB or {}
     for name, count in pairs(XddTrackerDB) do
+        print("Adding " .. name .. " to the list")
         local entry = content:CreateFontString(nil, "OVERLAY", "GameFontNormal")
         entry:SetPoint("TOPLEFT", 10, yOffset)
         entry:SetText(name .. ": " .. count .. " deaths")
         yOffset = yOffset - 20
+        print("Added " .. name .. " to the list")
     end
 end
 
 
-UpdateDeathList()

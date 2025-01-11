@@ -1,4 +1,5 @@
 function XddTracker:ADDON_LOADED(addonName)
+  print(self.PREFIX)
   if addonName == self.PREFIX then
     print("XddTracker loaded, syncing with database with GUILD...")
     if not XddTrackerDB then
@@ -12,7 +13,8 @@ end
 
 function XddTracker:PLAYER_DEAD()
   self.DB[self.playerName] = (self.DB[self.playerName] or 0) + 1
-
+  XddTrackerDB[self.playerName] = self.DB[self.playerName]
+  print(yay)
   local cause = "Unknown"
   if self.recentDamage.subevent == "ENVIRONMENTAL_DAMAGE" then
     cause = "Fall Damage"
