@@ -1,3 +1,5 @@
+XddTracker.VERSION = "1.0"
+
 -- Addon prefix
 XddTracker.PREFIX = "XddTracker"
 
@@ -22,3 +24,8 @@ XddTracker.MSG_DEATH_BROADCAST = "DETH_"
 -- Mouse clicks wowapi
 XddTracker.WOW_API_LEFTCLICK = "LeftButtonUp"
 XddTracker.WOW_API_RIGHTCLICK = "RightButtonUp"
+
+-- Colors
+XddTracker.COLOR_RESET = "|r"
+XddTracker.COLOR_ORANGE = "|cFFFFA500"
+XddTracker.COLOR_GREEN = "|cFF00FF00"

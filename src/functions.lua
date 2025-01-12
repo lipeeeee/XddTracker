@@ -30,3 +30,7 @@ function XddTracker:MergeDB(player, count)
   end
   return false
 end
+
+function XddTracker:SyncData()
+  SendAddonMessage(XddTracker.PREFIX, XddTracker.MSG_SYNC_REQUEST, XddTracker.CHANNEL_GUILD)
+end

@@ -7,12 +7,13 @@ function XddTracker:ADDON_LOADED(addonName)
     self.DB = XddTrackerDB or {} -- Sync db
     -- C_Timer only came in WOD so we rawdog it
     self:BroadcastDB()
+    self:SyncData()
   end
+  UpdateDeathList()
 end
 
 function XddTracker:PLAYER_DEAD()
   self.DB[self.playerName] = (self.DB[self.playerName] or 0) + 1
-
   local cause = "Unknown"
   if self.recentDamage.subevent == "ENVIRONMENTAL_DAMAGE" then
     cause = "Fall Damage"
@@ -24,6 +25,8 @@ function XddTracker:PLAYER_DEAD()
     self.playerName .. " has died! Cause: " .. cause .. ". Total deaths: " .. self.DB[self.playerName],
     ChatTypeInfo["RAID_WARNING"])
   self:BroadcastDeath(self.playerName)
+
+  UpdateDeathList()
 end
 
 function XddTracker:COMBAT_LOG_EVENT_UNFILTERED()
@@ -41,9 +44,8 @@ function XddTracker:COMBAT_LOG_EVENT_UNFILTERED()
 end
 
 function XddTracker:CHAT_MSG_ADDON(prefix, message, channel, sender)
-  -- if prefix ~= "XddTracker" or sender == UnitName("player") then return end
-  if prefix ~= self.PREFIX then
-    print("[DEBUG] IGNORING MESSAGE((" .. prefix .. ")" .. message .. ") IN " .. channel)
+  if prefix ~= self.PREFIX or sender == UnitName("player") then
+    print("[DEBUG] IGNORING MESSAGE((" .. prefix .. ")" .. message .. ") IN " .. channel .. " BY " .. sender)
     return
   end
 

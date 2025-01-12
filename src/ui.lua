@@ -1,7 +1,3 @@
---
--- ISSUES: This is not running at all
--- creating frame works
-
 -- Create Main Frame
 local XddTrackerFrame = CreateFrame("Frame", "XddTrackerFrame", UIParent)
 XddTrackerFrame:SetSize(250, 300)
@@ -41,19 +37,32 @@ local content = CreateFrame("Frame", "XddTrackerContent", scrollFrame)
 content:SetSize(220, 220)
 scrollFrame:SetScrollChild(content)
 
--- Dynamic Death List
-local function UpdateDeathList()
-    content:ReleaseChildren()  -- Clear previous entries
 
+--Clear Children (content:ReleaseChildren was crashing the function)
+local function ClearContentChildren(entry) 
+    for _, entries in ipairs(entry) do
+        entries:Hide()
+        entries = nil
+    end
+end
+
+
+local deathEntries = {}
+-- Dynamic Death List
+_G.UpdateDeathList = function ()
+    ClearContentChildren(deathEntries)
+
+    deathEntries = {}
     local yOffset = -5
-    XddTrackerDB = XddTrackerDB or {}
     for name, count in pairs(XddTrackerDB) do
         local entry = content:CreateFontString(nil, "OVERLAY", "GameFontNormal")
         entry:SetPoint("TOPLEFT", 10, yOffset)
         entry:SetText(name .. ": " .. count .. " deaths")
         yOffset = yOffset - 20
+        table.insert(deathEntries, entry)
     end
 end
 
-
 UpdateDeathList()
+
+

@@ -8,7 +8,7 @@
 core.lua
 constants.lua
 events.lua
-functions.lua
 commands.lua
-button.lua
+functions.lua
 ui.lua
+button.lua
