@@ -1,4 +1,5 @@
 XddTracker.VERSION = "1.0"
+XddTracker.DEBUG = true -- Debug flag for prints
 
 -- Addon prefix
 XddTracker.PREFIX = "XddTracker"

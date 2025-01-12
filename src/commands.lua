@@ -9,7 +9,7 @@ end
 SLASH_XDDXDD1 = "/xdd"
 SlashCmdList["XDDXDD"] = function()
   SendAddonMessage(XddTracker.PREFIX, XddTracker.MSG_SYNC_SEND .. "xdd:1", XddTracker.CHANNEL_GUILD)
-  print("XddTracker: xdd'd")
+  XddTracker:printd("xdd'd")
 end
 
 SLASH_XDDSYNC1 = "/sync"
@@ -20,7 +20,7 @@ end
 
 SLASH_XDDUIPD1 = "/xddup"
 SlashCmdList["XDDUIPD"] = function()
-  print("XddTracker: UI update command received.")
+  XddTracker:printd("Ui Update command received")
   UpdateDeathList()
-  print("XddTracker: UI updated.")
+  XddTracker:printd("Ui updated")
 end

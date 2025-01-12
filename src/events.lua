@@ -45,11 +45,11 @@ end
 
 function XddTracker:CHAT_MSG_ADDON(prefix, message, channel, sender)
   if prefix ~= self.PREFIX or sender == UnitName("player") then
-    print("[DEBUG] IGNORING MESSAGE((" .. prefix .. ")" .. message .. ") IN " .. channel .. " BY " .. sender)
+    self:printd("IGNORING MESSAGE((" .. prefix .. ")" .. message .. ") IN " .. channel .. " BY " .. sender)
     return
   end
 
-  print("[DEBUG] Received - (" .. prefix .. ")" .. message)
+  self:printd("Received - (" .. prefix .. ")" .. message)
   local command = string.sub(message, 1, self.MSG_LEN)
   if command == self.MSG_SYNC_SEND then -- Sync data
     local data = string.sub(message, 6)

@@ -1,3 +1,10 @@
+-- For printing debug prints
+function XddTracker:printd(message)
+  if self.DEBUG then
+    print("[XddTracker - DEBUG] " .. message)
+  end
+end
+
 function XddTracker:BroadcastDB()
   for name, count in pairs(self.DB) do
     local message = name .. ":" .. count
@@ -31,6 +38,8 @@ function XddTracker:MergeDB(player, count)
   return false
 end
 
+-- Requests syncing in guild and broadcasts own db
 function XddTracker:SyncData()
   SendAddonMessage(XddTracker.PREFIX, XddTracker.MSG_SYNC_REQUEST, XddTracker.CHANNEL_GUILD)
+  self:BroadcastDB()
 end
