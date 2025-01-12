@@ -12,7 +12,8 @@ files_to_install = [
     f"{src_folder}/functions.lua",
     f"{src_folder}/commands.lua",
     f"{src_folder}/constants.lua",
-    f"{src_folder}/ui.lua"
+    f"{src_folder}/ui.lua",
+    f"{src_folder}/button.lua"
 ]
 
 # import directly
