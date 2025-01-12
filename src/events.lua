@@ -6,7 +6,6 @@ function XddTracker:ADDON_LOADED(addonName)
     end
     self.DB = XddTrackerDB or {} -- Sync db
     -- C_Timer only came in WOD so we rawdog it
-    self:BroadcastDB()
     self:SyncData()
   end
   UpdateDeathList()
