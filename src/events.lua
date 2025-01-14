@@ -1,10 +1,6 @@
 function XddTracker:ADDON_LOADED(addonName)
   if addonName == self.PREFIX then
     print("XddTracker loaded, syncing with database with GUILD...")
-    if not XddTrackerDB then
-      XddTrackerDB = {}          -- What.. the.. fuck
-    end
-    self.DB = XddTrackerDB or {} -- Sync db
     -- C_Timer only came in WOD so we rawdog it
     self:SyncData()
   end
@@ -23,8 +19,7 @@ function XddTracker:PLAYER_DEAD()
   RaidNotice_AddMessage(RaidWarningFrame,
     self.playerName .. " has died! Cause: " .. cause .. ". Total deaths: " .. self.DB[self.playerName],
     ChatTypeInfo["RAID_WARNING"])
-  self:BroadcastDeath(self.playerName)
-
+  self:BroadcastDeath()
   UpdateDeathList()
 end
 

@@ -21,3 +21,16 @@ XddTracker.frame:SetScript("OnEvent", function(self, event, ...)
     XddTracker[event](XddTracker, ...) -- Pass the addon table for context
   end
 end)
+
+-- Initializes / retrieves saved vars
+if not XddTrackerDB then
+  XddTrackerDB = {}
+end
+
+if not XddTrackerMinimapPos then
+  XddTrackerMinimapPos = { x = 0, y = 0}
+end
+
+XddTracker.DB = XddTrackerDB
+XddTracker.MinimapPos = XddTrackerMinimapPos
+
