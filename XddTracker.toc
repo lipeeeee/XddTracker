@@ -3,7 +3,7 @@
 ## Author: lipeeeee 
 ## Version: 1.0
 ## Notes: Tracks deaths & anounces them
-## SavedVariables: XddTrackerDB
+## SavedVariables: XddTrackerDB XddTrackerMinimapPos
 
 embeds.xml
 

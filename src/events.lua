@@ -1,12 +1,7 @@
 function XddTracker:ADDON_LOADED(addonName)
   if addonName == self.PREFIX then
     print("XddTracker loaded, syncing with database with GUILD...")
-    if not XddTrackerDB then
-      XddTrackerDB = {}          -- What.. the.. fuck
-    end
-    self.DB = XddTrackerDB or {} -- Sync db
     -- C_Timer only came in WOD so we rawdog it
-    self:BroadcastDB()
     self:SyncData()
   end
   UpdateDeathList()
@@ -24,8 +19,7 @@ function XddTracker:PLAYER_DEAD()
   RaidNotice_AddMessage(RaidWarningFrame,
     self.playerName .. " has died! Cause: " .. cause .. ". Total deaths: " .. self.DB[self.playerName],
     ChatTypeInfo["RAID_WARNING"])
-  self:BroadcastDeath(self.playerName)
-
+  self:BroadcastDeath()
   UpdateDeathList()
 end
 
@@ -45,11 +39,11 @@ end
 
 function XddTracker:CHAT_MSG_ADDON(prefix, message, channel, sender)
   if prefix ~= self.PREFIX or sender == UnitName("player") then
-    print("[DEBUG] IGNORING MESSAGE((" .. prefix .. ")" .. message .. ") IN " .. channel .. " BY " .. sender)
+    self:printd("IGNORING MESSAGE((" .. prefix .. ")" .. message .. ") IN " .. channel .. " BY " .. sender)
     return
   end
 
-  print("[DEBUG] Received - (" .. prefix .. ")" .. message)
+  self:printd("Received - (" .. prefix .. ")" .. message)
   local command = string.sub(message, 1, self.MSG_LEN)
   if command == self.MSG_SYNC_SEND then -- Sync data
     local data = string.sub(message, 6)
