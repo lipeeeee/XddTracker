@@ -54,7 +54,11 @@ end)
 -- Events
 button:SetScript("OnClick", function(self, buttonClicked)
   if buttonClicked == "LeftButton" then
-    -- OPENUI
+    if XddTrackerFrame:IsShown() then
+      XddTrackerFrame:Hide()
+    else
+      XddTrackerFrame:Show()
+    end
   elseif buttonClicked == "RightButton" then
     XddTracker:SyncData()
   end

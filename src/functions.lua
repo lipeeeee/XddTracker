@@ -34,3 +34,23 @@ end
 function XddTracker:SyncData()
   SendAddonMessage(XddTracker.PREFIX, XddTracker.MSG_SYNC_REQUEST, XddTracker.CHANNEL_GUILD)
 end
+
+function XddTracker:BubbleSort(inputTable)
+  local copy = {}
+  for k, v in pairs(inputTable) do
+      table.insert(copy, {k, v})
+  end
+
+  local n = #copy
+  local swapped = true
+  while swapped do
+      swapped = false
+      for i = 1, n - 1 do
+          if copy[i][2] < copy[i + 1][2] then
+              copy[i], copy[i + 1] = copy[i + 1], copy[i]
+              swapped = true
+          end
+      end
+  end
+  return copy
+end

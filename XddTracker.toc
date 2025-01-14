@@ -5,6 +5,8 @@
 ## Notes: Tracks deaths & anounces them
 ## SavedVariables: XddTrackerDB
 
+embeds.xml
+
 core.lua
 constants.lua
 events.lua
