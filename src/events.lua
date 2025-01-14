@@ -8,7 +8,7 @@ function XddTracker:ADDON_LOADED(addonName)
 end
 
 function XddTracker:PLAYER_DEAD()
-  self.DB[self.playerName] = (self.DB[self.playerName] or 0) + 1
+  XddTrackerDB[self.playerName] = (XddTrackerDB[self.playerName] or 0) + 1
   local cause = "Unknown"
   if self.recentDamage.subevent == "ENVIRONMENTAL_DAMAGE" then
     cause = "Fall Damage"
@@ -17,7 +17,7 @@ function XddTracker:PLAYER_DEAD()
   end
 
   RaidNotice_AddMessage(RaidWarningFrame,
-    self.playerName .. " has died! Cause: " .. cause .. ". Total deaths: " .. self.DB[self.playerName],
+    self.playerName .. " has died! Cause: " .. cause .. ". Total deaths: " .. XddTrackerDB[self.playerName],
     ChatTypeInfo["RAID_WARNING"])
   self:BroadcastDeath()
   UpdateDeathList()
@@ -38,7 +38,8 @@ function XddTracker:COMBAT_LOG_EVENT_UNFILTERED()
 end
 
 function XddTracker:CHAT_MSG_ADDON(prefix, message, channel, sender)
-  if prefix ~= self.PREFIX or sender == UnitName("player") then
+  -- if prefix ~= self.PREFIX or sender == UnitName("player") then
+  if prefix ~= self.PREFIX then
     self:printd("IGNORING MESSAGE((" .. prefix .. ")" .. message .. ") IN " .. channel .. " BY " .. sender)
     return
   end
@@ -61,8 +62,4 @@ function XddTracker:CHAT_MSG_ADDON(prefix, message, channel, sender)
     print("XddTracker: Sync requested by " .. sender .. ". Sending data.")
     self:BroadcastDB()
   end
-end
-
-function XddTracker:PLAYER_LOGOUT()
-  XddTrackerDB = self.DB
 end

@@ -7,7 +7,7 @@ button:SetMovable(true)
 button:EnableMouse(true)
 button:RegisterForDrag("LeftButton")
 button:RegisterForClicks(XddTracker.WOW_API_LEFTCLICK, XddTracker.WOW_API_RIGHTCLICK)
-button:SetPoint("TOPRIGHT", Minimap, XddTracker.MinimapPos.x, XddTracker.MinimapPos.y)
+button:SetPoint("TOPRIGHT", Minimap, XddTrackerMinimapPos.x, XddTrackerMinimapPos.y)
 
 -- Appearence
 button.texture = button:CreateTexture(nil, "BACKGROUND")
@@ -41,8 +41,8 @@ local function UpdateButtonPosition() --dont let icon go outside minimap
   local posy = math.sin(angle) * radius
   button:ClearAllPoints()
   button:SetPoint("CENTER", Minimap, "CENTER", posx, posy)
-  XddTracker.MinimapPos.x = posx
-  XddTracker.MinimapPos.y = posy
+  XddTrackerMinimapPos.x = posx
+  XddTrackerMinimapPos.y = posy
   -- print("[DEBUG] Minimap position = (".. posx .. ", " .. posy ..")")
 end
 button:SetScript("OnDragStart", function(self)

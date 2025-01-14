@@ -7,7 +7,6 @@ XddTracker = XddTracker or {}
 XddTracker.frame = CreateFrame("Frame")
 XddTracker.playerName = UnitName("player")
 XddTracker.recentDamage = {}
-XddTracker.DB = XddTrackerDB or {}
 
 -- Register Events
 XddTracker.frame:RegisterEvent("PLAYER_LOGIN")
@@ -30,7 +29,4 @@ end
 if not XddTrackerMinimapPos then
   XddTrackerMinimapPos = { x = 0, y = 0}
 end
-
-XddTracker.DB = XddTrackerDB
-XddTracker.MinimapPos = XddTrackerMinimapPos
 
