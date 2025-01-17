@@ -19,7 +19,7 @@ button.texture:SetAllPoints(button)
 -- button.border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
 -- button.border:SetWidth(28*3)
 -- button.border:SetHeight(28*3)
--- button.border:SetPoint("TOPLEFT", button, -10, -10)
+-- button.border:SetPoint("jOPLEFT", button, -10, -10)
 
 -- Draggin' shit
 local function UpdateButtonPosition() --dont let icon go outside minimap

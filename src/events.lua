@@ -52,12 +52,14 @@ function XddTracker:CHAT_MSG_ADDON(prefix, message, channel, sender)
     if self:MergeDB(name, count) then
       print(name .. "'s death count updated to " .. count .. " (Synced)")
     end
+    UpdateDeathList()
   elseif command == self.MSG_DEATH_BROADCAST then -- In-game death announcer
     local data = string.sub(message, 6)
     local name, count = strsplit(":", data)
     if self:MergeDB(name, count) then
       RaidNotice_AddMessage(RaidWarningFrame, name .. " has died! Total deaths: " .. count, ChatTypeInfo["RAID_WARNING"])
     end
+    UpdateDeathList()
   elseif command == self.MSG_SYNC_REQUEST then -- Sync request
     print("XddTracker: Sync requested by " .. sender .. ". Sending data.")
     self:BroadcastDB()

@@ -5,6 +5,8 @@ local_addon_path = "XddTracker/"
 wow_path = "/mnt/d/Games/World\ of\ Warcraft\ 3.3.5a/"
 src_folder = "src"
 media_folder = f"media"
+lib_folder = f"libs"
+xml_folder = f"xml"
 addon_path = wow_path + "Interface/AddOns/XddTracker/"
 files_to_install = [ 
     "XddTracker.toc",
@@ -28,6 +30,16 @@ for file in files_to_install:
 os.system(f"mkdir -p {addon_path}media/")
 os.system(f"cp -r {media_folder}/* {addon_path}media/")
 print("> installed media folder")
+
+# handle libs
+os.system(f"mkdir -p {addon_path}{lib_folder}")
+os.system(f"cp -r {lib_folder}/* {addon_path}/{lib_folder}")
+print("> installed libs \folder")
+
+# handle xml
+os.system(f"mkdir -p {addon_path}{xml_folder}")
+os.system(f"cp -r {xml_folder}/* {addon_path}/{xml_folder}")
+print("> installed xml\folder")
 
 # zip
 zip_str = zip_str[1:]
