@@ -3,112 +3,139 @@ print("What the fuck just broke")
 local AceGUI = LibStub("AceGUI-3.0")
 
 XddTrackerFrame = AceGUI:Create("SimpleGroup")
-XddTrackerFrame:SetTitle("XddTracker")
-XddTrackerFrame:SetLayout("Flow")
-XddTrackerFrame:SetWidth(250)
-XddTrackerFrame:SetHeight(300)
-
+XddTrackerFrame:SetLayout("Fill")
+XddTrackerFrame:SetFullWidth(true)
+XddTrackerFrame:SetFullHeight(true)
 
 
 --Define backdrop table
-local backdrop = {
+XddTrackerFrame.frame:SetBackdrop({
     bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
-    edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+    edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
     tile = true,
-    tileSize = 32,
-    edgeSize = 32,
-    insets = { left = 11, right = 12, top = 12, bottom = 11 }
-}
+    tileSize = 16,
+    edgeSize = 16,
+    insets = { left = 4, right = 4, top = 4, bottom = 4 }
+})
 
 -- Apply the backdrop to the frame
-XddTrackerFrame.frame:SetBackdrop(backdrop)
-XddTrackerFrame.frame:SetBackdropColor(0, 0, 0, 1) -- Set the backdrop color (black with full opacity)
+XddTrackerFrame.frame:SetBackdropColor(0, 0, 0, 0.8) -- Set the backdrop color (black with full opacity)
 XddTrackerFrame.frame:SetBackdropBorderColor(1, 1, 1, 1) -- Set the border color (white with full opacity)
-XddTrackerFrame.frame:SetWidth(250)
+XddTrackerFrame.frame:SetWidth(230)
 XddTrackerFrame.frame:SetHeight(300)
+XddTrackerFrame.frame:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
+
+XddTrackerFrame.frame:SetMovable(true)
+XddTrackerFrame.frame:EnableMouse(true)
+XddTrackerFrame.frame:RegisterForDrag("LeftButton")
+XddTrackerFrame.frame:SetScript("OnDragStart", function(self)
+    self:StartMoving()
+end)
+XddTrackerFrame.frame:SetScript("OnDragStop", function(self)
+    self:StopMovingOrSizing()
+end)
 
 
+local scrollFrame = AceGUI:Create("ScrollFrame")
+scrollFrame:SetLayout("List")
+scrollFrame:SetWidth(200)
+scrollFrame:SetHeight(270)
+XddTrackerFrame:AddChild(scrollFrame)
 
-local columns = { "Name", "Deaths" }
-local rows = {}
 
--- Create the Rows to insert the data
-local function CreateRow(parent, rowData)
-    local row = AceGUI:Create("SimpleGroup")
-    row:SetLayout("Flow")
-    row:SetFullWidth(true)
+local headerGroup = AceGUI:Create("SimpleGroup")
+headerGroup:SetFullWidth(true)
+headerGroup:SetLayout("Flow")
 
-    for _, cellData in ipairs(rowData) do
-        local cell = AceGUI:Create("Label")
-        cell:SetText(cellData)
-        cell:SetWidth(100)
-        row:AddChild(cell)
-    end
+local nameHeader = AceGUI:Create("Label")
+nameHeader:SetText("Name")
+nameHeader:SetWidth(100)
+headerGroup:AddChild(nameHeader)
 
-    parent:AddChild(row)
+local deathsHeader = AceGUI:Create("Label")
+deathsHeader:SetText("Deaths")
+deathsHeader:SetWidth(100)
+headerGroup:AddChild(deathsHeader)
+
+scrollFrame:AddChild(headerGroup)
+
+local contentGroup = AceGUI:Create("SimpleGroup")
+contentGroup:SetLayout("Flow") -- Layout inside the scroll frame
+contentGroup:SetWidth(200)
+contentGroup:SetHeight(270)
+
+scrollFrame:AddChild(contentGroup)
+
+
+-- Function to dynamically add rows
+local function AddRow(parent, name, deaths)
+    local rowGroup = AceGUI:Create("SimpleGroup")
+    rowGroup:SetFullWidth(true)
+    rowGroup:SetLayout("Flow")
+
+    local nameLabel = AceGUI:Create("Label")
+    nameLabel:SetText(name)
+    nameLabel:SetWidth(100)
+    rowGroup:AddChild(nameLabel)
+
+    local deathsLabel = AceGUI:Create("Label")
+    deathsLabel:SetText(tostring(deaths))
+    deathsLabel:SetWidth(100)
+    rowGroup:AddChild(deathsLabel)
+
+    parent:AddChild(rowGroup)
 end
 
---Table :)
-local function CreateTable(parent, columns, rows)
-    local header = AceGUI:Create("SimpleGroup")
-    header:SetLayout("Flow")
-    header:SetFullWidth(true)
+local closeButton = CreateFrame("Button", nil, XddTrackerFrame.frame, "UIPanelCloseButton")
+closeButton:SetSize(24, 24)
+closeButton:SetPoint("TOPRIGHT", XddTrackerFrame.frame, "TOPRIGHT", -15, -5)
+closeButton:SetScript("OnClick", function()
+    XddTrackerFrame.frame:Hide()
+end)
 
-    for _, column in ipairs(columns) do
-        local headerCell = AceGUI:Create("Label")
-        headerCell:SetText(column)
-        headerCell:SetWidth(100)
-        header:AddChild(headerCell)
-    end
-
-    parent:AddChild(header)
-
-    for _, row in ipairs(rows) do
-        CreateRow(parent, row)
+local function ClearContentChildren(parent)
+    while #parent.children > 0 do
+        local child = table.remove(parent.children)
+        child:Release()
     end
 end
 
-CreateTable(XddTrackerFrame, columns, rows)
-
-
-
-
--- Clear Children (content:ReleaseChildren was crashing the function)
-    function ClearContentChildren(entry) 
-        while #entry.children > 0 do
-            local child = table.remove(entry.children)
-            child:Release()
-        end
-    end
-    
-    local deathEntries = {}
     -- Dynamic Death List
     _G.UpdateDeathList = function ()
-        print("puta de mensagem longa para se ver na puta do chat")
+        print("puta de mensagem longa para se ver na puta do chat") 
+        ClearContentChildren(contentGroup)
+
         
-        -- Clear previous entries
-        ClearContentChildren(XddTrackerFrame)
-        
-        local header = AceGUI:Create("SimpleGroup")
-        header:SetLayout("Flow")
-        header:SetFullWidth(true)
-    
-        for _, column in ipairs(columns) do
-            local headerCell = AceGUI:Create("Label")
-            headerCell:SetText(column)
-            headerCell:SetWidth(100)
-            header:AddChild(headerCell)
+
+        local orderedDB = {     
+            { "EMPTY" , 0 },
+            {"EMPTY", 0},
+            { "EMPTY" , 0 },
+            {"EMPTY", 0},
+            { "EMPTY" , 0 },
+            {"EMPTY", 0},
+            { "EMPTY" , 0 },
+            {"EMPTY", 0},
+            
+ }
+        if (XddTracker.DB ~= nil ) then
+           orderedDB = XddTracker:BubbleSort(XddTrackerDB)
         end
-        
-        XddTrackerFrame:AddChild(header)
-        local orderedDB = XddTracker:BubbleSort(XddTrackerDB)
+
         for _, entry in ipairs(orderedDB) do
             local name, count = entry[1], entry[2]
-            CreateRow(XddTrackerFrame, { name, count })
+            AddRow(contentGroup, name, count)
         end
+
+        
+       -- scrollFrame:DoLayout()  
     end
     
-    UpdateDeathList()
+
+
+_G.ShowXddTrackerFrame = function()
+    XddTrackerFrame.frame:Show()
+end
 
 
 
