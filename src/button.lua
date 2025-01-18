@@ -43,7 +43,6 @@ local function UpdateButtonPosition() --dont let icon go outside minimap
   button:SetPoint("CENTER", Minimap, "CENTER", posx, posy)
   XddTrackerMinimapPos.x = posx
   XddTrackerMinimapPos.y = posy
-  -- print("[DEBUG] Minimap position = (".. posx .. ", " .. posy ..")")
 end
 button:SetScript("OnDragStart", function(self)
   self:SetScript("OnUpdate", UpdateButtonPosition)

@@ -1,5 +1,3 @@
-print("What the fuck just broke")
-
 local AceGUI = LibStub("AceGUI-3.0")
 
 XddTrackerFrame = AceGUI:Create("SimpleGroup")
@@ -20,7 +18,7 @@ XddTrackerFrame.frame:SetBackdrop({
 
 -- Apply the backdrop to the frame
 XddTrackerFrame.frame:SetBackdropColor(0, 0, 0, 0.8)     -- Set the backdrop color (black with full opacity)
-XddTrackerFrame.frame:SetBackdropBorderColor(1, 1, 1, 0) -- Set the border color (white with full opacity)
+XddTrackerFrame.frame:SetBackdropBorderColor(1, 1, 1, 1) -- Set the border color (white with full opacity)
 XddTrackerFrame.frame:SetWidth(230)
 XddTrackerFrame.frame:SetHeight(300)
 XddTrackerFrame.frame:SetPoint("TOPRIGHT", UIParent, "TOPRIGHT", -300, -100)
@@ -35,6 +33,10 @@ XddTrackerFrame.frame:SetScript("OnDragStop", function(self)
   self:StopMovingOrSizing()
 end)
 
+
+
+
+
 local scrollFrame = AceGUI:Create("ScrollFrame")
 scrollFrame:SetLayout("List")
 scrollFrame:SetWidth(200)
@@ -47,7 +49,7 @@ headerGroup:SetFullWidth(true)
 headerGroup:SetLayout("Flow")
 
 local nameHeader = AceGUI:Create("Label")
-nameHeader:SetText("Name")
+nameHeader:SetText("   Name")
 nameHeader:SetWidth(100)
 headerGroup:AddChild(nameHeader)
 
@@ -57,11 +59,11 @@ deathsHeader:SetWidth(100)
 headerGroup:AddChild(deathsHeader)
 
 scrollFrame:AddChild(headerGroup)
-
 local contentGroup = AceGUI:Create("SimpleGroup")
 contentGroup:SetLayout("Flow") -- Layout inside the scroll frame
 contentGroup:SetWidth(200)
 contentGroup:SetHeight(270)
+
 
 scrollFrame:AddChild(contentGroup)
 
@@ -72,7 +74,7 @@ local function AddRow(parent, name, deaths)
   rowGroup:SetLayout("Flow")
 
   local nameLabel = AceGUI:Create("Label")
-  nameLabel:SetText(name)
+  nameLabel:SetText("   " .. name)
   nameLabel:SetWidth(100)
   rowGroup:AddChild(nameLabel)
 
@@ -84,11 +86,38 @@ local function AddRow(parent, name, deaths)
   parent:AddChild(rowGroup)
 end
 
-local closeButton = CreateFrame("Button", nil, XddTrackerFrame.frame, "UIPanelCloseButton")
+
+local titleFrame = CreateFrame("Frame", nil, XddTrackerFrame.frame)
+titleFrame:SetBackdrop({
+  bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+  edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+  tile = true,
+  tileSize = 16,
+  edgeSize = 16,
+  insets = { left = 0, right = 0, top = 4, bottom = 4 }
+})
+titleFrame:SetSize(230, 20)
+titleFrame:SetPoint("TOPLEFT", XddTrackerFrame.frame, "TOPLEFT", 0, 15)
+
+local titleText = titleFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+titleText:SetPoint("CENTER", titleFrame, "CENTER", 0, 0)
+titleText:SetText("XddTracker")
+
+local closeButton = CreateFrame("Button", nil, titleFrame, "UIPanelCloseButton")
 closeButton:SetSize(24, 24)
-closeButton:SetPoint("TOPRIGHT", XddTrackerFrame.frame, "TOPRIGHT", 0, 0)
+closeButton:SetPoint("TOPRIGHT", titleFrame, "TOPRIGHT", 0, 1)
 closeButton:SetScript("OnClick", function()
   XddTrackerFrame.frame:Hide()
+end)
+
+titleFrame:SetMovable(true)
+titleFrame:EnableMouse(true)
+titleFrame:RegisterForDrag("LeftButton")
+titleFrame:SetScript("OnDragStart", function(self)
+  XddTrackerFrame.frame:StartMoving()
+end)
+titleFrame:SetScript("OnDragStop", function(self)
+  XddTrackerFrame.frame:StopMovingOrSizing()
 end)
 
 local function ClearContentChildren(parent)

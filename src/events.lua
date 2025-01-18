@@ -9,32 +9,12 @@ end
 
 function XddTracker:PLAYER_DEAD()
   XddTrackerDB[self.playerName] = (XddTrackerDB[self.playerName] or 0) + 1
-  local cause = "Unknown"
-  if self.recentDamage.subevent == "ENVIRONMENTAL_DAMAGE" then
-    cause = "Fall Damage"
-  elseif self.recentDamage.sourceName then
-    cause = self.recentDamage.sourceName .. " (" .. (self.recentDamage.spellName or "Unknown") .. ")"
-  end
 
   RaidNotice_AddMessage(RaidWarningFrame,
-    self.playerName .. " has died! Cause: " .. cause .. ". Total deaths: " .. XddTrackerDB[self.playerName],
+    self.playerName .. " has died! Total deaths: " .. XddTrackerDB[self.playerName],
     ChatTypeInfo["RAID_WARNING"])
   self:BroadcastDeath()
   UpdateDeathList()
-end
-
-function XddTracker:COMBAT_LOG_EVENT_UNFILTERED()
-  local timestamp, subevent, _, sourceGUID, sourceName, _, _, destGUID, destName, _, _, spellId, spellName, _, damage =
-      CombatLogGetCurrentEventInfo()
-  if destName == self.playerName then
-    self.recentDamage = {
-      timestamp = timestamp,
-      subevent = subevent,
-      sourceName = sourceName or "Environment",
-      spellName = spellName or "Melee",
-      damage = damage
-    }
-  end
 end
 
 function XddTracker:CHAT_MSG_ADDON(prefix, message, channel, sender)

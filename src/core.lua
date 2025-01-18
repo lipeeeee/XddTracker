@@ -13,7 +13,6 @@ XddTracker.frame:RegisterEvent("PLAYER_LOGIN")
 XddTracker.frame:RegisterEvent("PLAYER_LOGOUT")
 XddTracker.frame:RegisterEvent("PLAYER_DEAD")
 XddTracker.frame:RegisterEvent("CHAT_MSG_ADDON")
-XddTracker.frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 XddTracker.frame:RegisterEvent("ADDON_LOADED")
 XddTracker.frame:SetScript("OnEvent", function(self, event, ...)
   if XddTracker[event] then
